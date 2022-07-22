@@ -5,6 +5,7 @@
 import express, { Application, Request, Response } from 'express';
 import path from 'path';
 import { landingPage } from './landing-page';
+import { lookupItem } from './lookup-item';
 
 const app: Application = express();
 app.use(express.urlencoded({ extended: true }));
@@ -13,6 +14,10 @@ const port = 8080;
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).send(landingPage);
+});
+
+app.get('/item/:number', (req: Request, res: Response) => {
+  res.status(200).send(lookupItem(req.params.number));
 });
 
 app.use('/static', express.static(path.resolve(__dirname, './static')));

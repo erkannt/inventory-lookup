@@ -1,5 +1,22 @@
 function onScanSuccess(decodedText, decodedResult) {
-  // handle the scanned code as you like, for example:
+  fetch('/item/383')
+    .then(
+    function(response) {
+        if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+            response.status);
+        return;
+        }
+
+        // Examine the text in the response
+        response.json().then(function(data) {
+        console.log(data);
+        });
+    }
+    )
+    .catch(function(err) {
+    console.log('Fetch Error :-S', err);
+    });
   console.log(`Code matched = ${decodedText}`, decodedResult);
 }
 

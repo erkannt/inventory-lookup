@@ -12,6 +12,7 @@ export const landingPage = `
 		<body>
 			<h1>DMUN Inventar Scanner</h1>
 			<div id="reader" width="600px"></div>
+			<div id="result"></div>
 			<script src="/static/index.js"></script>
 		</body>
 	</html>
