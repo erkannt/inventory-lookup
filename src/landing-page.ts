@@ -10,8 +10,8 @@ export const landingPage = `
 			<link rel="stylesheet" href="https://vanillacss.com/vanilla.css">
 		</head>
 		<body>
-			<h1>DMUN Inventar Scanner</h1>
-			<div id="reader" width="600px"></div>
+			<h1>Inventar Scanner</h1>
+			<div id="reader" width="100%"></div>
 			<div id="result"></div>
 			<script src="/static/index.js"></script>
 		</body>

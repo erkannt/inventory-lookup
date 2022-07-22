@@ -1,3 +1,5 @@
+const resultContainer = document.getElementById('result')
+
 function onScanSuccess(decodedText, decodedResult) {
   fetch('/item/383')
     .then(function (response) {
@@ -10,20 +12,23 @@ function onScanSuccess(decodedText, decodedResult) {
 
       // Examine the text in the response
       response.json().then(function (data) {
-        console.log(data);
+      resultContainer.innerHTML = `
+        <p>${data.verpackung}</p>
+      `
       });
     })
     .catch(function (err) {
-      console.log('Fetch Error :-S', err);
+      resultContainer.innerHTML = `
+        <p>Failed to get item</p>
+      `
     });
-  console.log(`Code matched = ${decodedText}`, decodedResult);
 }
 
 function onScanFailure() {}
 
 let html5QrcodeScanner = new Html5QrcodeScanner(
   'reader',
-  { fps: 10, qrbox: { width: 250, height: 250 } },
+  { fps: 10 },
   /* verbose= */ false,
 );
 
