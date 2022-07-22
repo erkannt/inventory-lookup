@@ -10,10 +10,9 @@ function onScanSuccess(decodedText, decodedResult) {
         return;
       }
 
-      // Examine the text in the response
-      response.json().then(function (data) {
+      response.text().then(function (text) {
       resultContainer.innerHTML = `
-        <p>${data.verpackung}</p>
+        <p>${text}</p>
       `
       });
     })
