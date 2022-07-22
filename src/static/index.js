@@ -18,7 +18,8 @@ function onScanSuccess(decodedText, decodedResult) {
     })
     .catch(function (err) {
       resultContainer.innerHTML = `
-        <p>Failed to get item</p>
+        <h2>Ooops</h2>
+        <p>Failed to get response from backend.</p>
       `;
     });
 }
