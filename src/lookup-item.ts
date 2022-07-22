@@ -1,6 +1,7 @@
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
+import * as tt from 'io-ts-types';
 
 type Item = {
   nummer: number;
@@ -12,7 +13,11 @@ type Item = {
   anmerkung: string;
 };
 
-const getItem = (): TE.TaskEither<unknown, Item> =>
+type GetItemFromSpreadsheet = (
+  itemNumber: number,
+) => TE.TaskEither<unknown, Item>;
+
+const getItemFromSpreadsheet: GetItemFromSpreadsheet = () =>
   pipe(
     {
       nummer: 383,
@@ -36,13 +41,19 @@ const renderItem = (item: Item) => `
   </p>
 `;
 
-const renderError = (number: number) => () =>
+const renderError = (query: string) => () =>
   `
   <h2>Ooops</h2>
-  <p>Couldn't retrieve an info for item number: ${number}</p>
+  <p>Couldn't retrieve an info for query: ${query}</p>
 `;
 
-type LookupItem = (number: unknown) => T.Task<string>;
+type LookupItem = (query: string) => T.Task<string>;
 
-export const lookupItem: LookupItem = (number) =>
-  pipe(number, getItem, TE.match(renderError(number as number), renderItem));
+export const lookupItem: LookupItem = (query) =>
+  pipe(
+    query,
+    tt.NumberFromString.decode,
+    TE.fromEither,
+    TE.chain(getItemFromSpreadsheet),
+    TE.match(renderError(query), renderItem),
+  );
