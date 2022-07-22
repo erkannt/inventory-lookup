@@ -1,4 +1,4 @@
-const resultContainer = document.getElementById('result')
+const resultContainer = document.getElementById('result');
 
 function onScanSuccess(decodedText, decodedResult) {
   fetch('/item/383')
@@ -11,15 +11,15 @@ function onScanSuccess(decodedText, decodedResult) {
       }
 
       response.text().then(function (text) {
-      resultContainer.innerHTML = `
+        resultContainer.innerHTML = `
         <p>${text}</p>
-      `
+      `;
       });
     })
     .catch(function (err) {
       resultContainer.innerHTML = `
         <p>Failed to get item</p>
-      `
+      `;
     });
 }
 
