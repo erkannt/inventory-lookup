@@ -1,4 +1,5 @@
 import * as T from 'fp-ts/Task';
+import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 
 type Item = {
@@ -11,7 +12,7 @@ type Item = {
   anmerkung: string;
 };
 
-const getItem = (): T.Task<Item> =>
+const getItem = (): TE.TaskEither<unknown, Item> =>
   pipe(
     {
       nummer: 383,
@@ -22,7 +23,7 @@ const getItem = (): T.Task<Item> =>
       standort: 'Kiel',
       anmerkung: 'Seriennr: 103072022149',
     },
-    T.of,
+    TE.right,
   );
 
 const renderItem = (item: Item) => `
@@ -35,7 +36,13 @@ const renderItem = (item: Item) => `
   </p>
 `;
 
+const renderError = (number: number) => () =>
+  `
+  <h2>Ooops</h2>
+  <p>Couldn't retrieve an info for item number: ${number}</p>
+`;
+
 type LookupItem = (number: unknown) => T.Task<string>;
 
 export const lookupItem: LookupItem = (number) =>
-  pipe(number, getItem, T.map(renderItem));
+  pipe(number, getItem, TE.match(renderError(number as number), renderItem));
