@@ -1,6 +1,5 @@
+import * as T from 'fp-ts/Task';
 import { pipe } from 'fp-ts/lib/function';
-
-type LookupItem = (number: unknown) => string;
 
 type Item = {
   nummer: number;
@@ -12,15 +11,19 @@ type Item = {
   anmerkung: string;
 };
 
-const getItem = (): Item => ({
-  nummer: 383,
-  artikel: 'Canon EOS 2000D (SN: 103072022149)',
-  anzahl: 1,
-  verpackung: 'Kiste 29',
-  kistenBezeichnung: 'Bild Technik',
-  standort: 'Kiel',
-  anmerkung: 'Seriennr: 103072022149',
-});
+const getItem = (): T.Task<Item> =>
+  pipe(
+    {
+      nummer: 383,
+      artikel: 'Canon EOS 2000D (SN: 103072022149)',
+      anzahl: 1,
+      verpackung: 'Kiste 29',
+      kistenBezeichnung: 'Bild Technik',
+      standort: 'Kiel',
+      anmerkung: 'Seriennr: 103072022149',
+    },
+    T.of,
+  );
 
 const renderItem = (item: Item) => `
   <p><b>${item.verpackung}</b> ${item.kistenBezeichnung}</p>
@@ -32,5 +35,7 @@ const renderItem = (item: Item) => `
   </p>
 `;
 
+type LookupItem = (number: unknown) => T.Task<string>;
+
 export const lookupItem: LookupItem = (number) =>
-  pipe(number, getItem, renderItem);
+  pipe(number, getItem, T.map(renderItem));

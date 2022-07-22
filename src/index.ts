@@ -16,8 +16,8 @@ app.get('/', (req: Request, res: Response) => {
   res.status(200).send(landingPage);
 });
 
-app.get('/item/:number', (req: Request, res: Response) => {
-  res.status(200).send(lookupItem(req.params.number));
+app.get('/item/:number', async (req: Request, res: Response) => {
+  res.status(200).send(await lookupItem(req.params.number)());
 });
 
 app.use('/static', express.static(path.resolve(__dirname, './static')));
