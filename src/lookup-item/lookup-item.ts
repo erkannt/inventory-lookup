@@ -6,10 +6,9 @@ import { sequenceS } from 'fp-ts/lib/Apply';
 import { constant, pipe } from 'fp-ts/lib/function';
 import * as tt from 'io-ts-types';
 import { Logger } from 'pino';
-import { getSheetRows } from './get-sheet-rows';
+import { Row } from '../types';
 import { renderError } from './render-error';
 import { renderRow } from './render-row';
-import { Row } from './sheet-types';
 
 type LookupMatchingRow = (
   numberToFind: number,
@@ -26,6 +25,7 @@ const lookupMatchingRow: LookupMatchingRow = (numberToFind, sheetRows) =>
 
 type Ports = {
   logger: Logger;
+  getSheetRows: TE.TaskEither<unknown, ReadonlyArray<Row>>;
 };
 
 type LookupItem = (ports: Ports) => (query: string) => T.Task<string>;
@@ -39,7 +39,7 @@ export const lookupItem: LookupItem = (ports) => (query) =>
         E.mapLeft(constant('query is not a number')),
         TE.fromEither,
       ),
-      sheetRows: getSheetRows,
+      sheetRows: ports.getSheetRows,
     },
     sequenceS(TE.ApplyPar),
     TE.chain(({ numberToFind, sheetRows }) =>

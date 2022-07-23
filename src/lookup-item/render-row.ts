@@ -1,4 +1,4 @@
-import { Row } from './sheet-types';
+import { Row } from '../types';
 
 export const renderRow = (row: Row): string => `
   <p><b>${row.Verpackung}</b> ${row.Kistenbezeichnung}</p>

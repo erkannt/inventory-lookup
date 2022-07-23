@@ -3,7 +3,7 @@ import * as TE from 'fp-ts/TaskEither';
 import { flow, identity, pipe } from 'fp-ts/lib/function';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { formatValidationErrors } from 'io-ts-reporters';
-import { sheetCodec } from './sheet-types';
+import { Row, sheetCodec } from './types';
 
 const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
 
@@ -30,11 +30,17 @@ const getSheet = (document: GoogleSpreadsheet) =>
     identity,
   );
 
-export const getSheetRows = pipe(
-  doc,
-  TE.right,
-  TE.chainFirst(spreadsheetAuth),
-  TE.chainFirst(loadSheetInfo),
-  TE.chain(getSheet),
-  TE.chainEitherKW(flow(sheetCodec.decode, E.mapLeft(formatValidationErrors))),
-);
+export const createGetSheetRows = (): TE.TaskEither<
+  unknown,
+  ReadonlyArray<Row>
+> =>
+  pipe(
+    doc,
+    TE.right,
+    TE.chainFirst(spreadsheetAuth),
+    TE.chainFirst(loadSheetInfo),
+    TE.chain(getSheet),
+    TE.chainEitherKW(
+      flow(sheetCodec.decode, E.mapLeft(formatValidationErrors)),
+    ),
+  );

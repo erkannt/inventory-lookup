@@ -6,6 +6,7 @@ import express, { Application, Request, Response } from 'express';
 import path from 'path';
 import createLogger from 'pino';
 import pinoHttp from 'pino-http';
+import { createGetSheetRows } from './get-sheet-rows';
 import { landingPage } from './landing-page';
 import { lookupItem } from './lookup-item';
 
@@ -16,16 +17,21 @@ const port = 8080;
 
 app.use(pinoHttp());
 
-const logger = createLogger();
+const adapters = {
+  logger: createLogger(),
+  getSheetRows: createGetSheetRows(),
+};
 
 app.get('/', (req: Request, res: Response) => {
   res.send(landingPage);
 });
 
 app.get('/item/:number', async (req: Request, res: Response) => {
-  res.status(200).send(await lookupItem({ logger })(req.params.number)());
+  res.status(200).send(await lookupItem(adapters)(req.params.number)());
 });
 
 app.use('/static', express.static(path.resolve(__dirname, './static')));
 
-app.listen(port, () => logger.info(`Server is listening on port ${port}`));
+app.listen(port, () =>
+  adapters.logger.info(`Server is listening on port ${port}`),
+);
