@@ -3,61 +3,26 @@ import * as RA from 'fp-ts/ReadonlyArray';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 import { sequenceS } from 'fp-ts/lib/Apply';
-import { constant, flow, identity, pipe } from 'fp-ts/lib/function';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { formatValidationErrors } from 'io-ts-reporters';
+import { constant, pipe } from 'fp-ts/lib/function';
 import * as tt from 'io-ts-types';
 import { Logger } from 'pino';
+import { getSheetRows } from './get-sheet-rows';
 import { renderError } from './render-error';
 import { renderRow } from './render-row';
-import { Row, sheetCodec } from './sheet-types';
+import { Row } from './sheet-types';
 
-const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
-
-const spreadsheetAuth = (document: GoogleSpreadsheet) =>
-  TE.tryCatch(
-    async () =>
-      document.useServiceAccountAuth({
-        client_email:
-          process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ??
-          'no client email provided',
-        private_key:
-          process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n') ??
-          'no private key provided',
-      }),
-    identity,
-  );
-
-const loadSheetInfo = (document: GoogleSpreadsheet) =>
-  TE.tryCatch(async () => document.loadInfo(), identity);
-
-const getSheet = (document: GoogleSpreadsheet) =>
-  TE.tryCatch(
-    async () => document.sheetsByIndex[0].getRows({ offset: 1, limit: 10000 }),
-    identity,
-  );
-
-type GetMatchingRow = (
+type LookupMatchingRow = (
   numberToFind: number,
   sheetRows: ReadonlyArray<Row>,
 ) => TE.TaskEither<unknown, Row>;
 
-const getMatchingRow: GetMatchingRow = (numberToFind, sheetRows) =>
+const lookupMatchingRow: LookupMatchingRow = (numberToFind, sheetRows) =>
   pipe(
     sheetRows,
     RA.findFirst((row) => row.Nummer === numberToFind.toString()),
     E.fromOption(() => `Could not find row with Nummer ${numberToFind}`),
     TE.fromEither,
   );
-
-const getSheetRows = pipe(
-  doc,
-  TE.right,
-  TE.chainFirst(spreadsheetAuth),
-  TE.chainFirst(loadSheetInfo),
-  TE.chain(getSheet),
-  TE.chainEitherKW(flow(sheetCodec.decode, E.mapLeft(formatValidationErrors))),
-);
 
 type Ports = {
   logger: Logger;
@@ -78,7 +43,7 @@ export const lookupItem: LookupItem = (ports) => (query) =>
     },
     sequenceS(TE.ApplyPar),
     TE.chain(({ numberToFind, sheetRows }) =>
-      getMatchingRow(numberToFind, sheetRows),
+      lookupMatchingRow(numberToFind, sheetRows),
     ),
     TE.match((error) => {
       ports.logger.error(error);
