@@ -1,27 +1,32 @@
 const resultContainer = document.getElementById('result');
 
-function onScanSuccess(decodedText, decodedResult) {
-  fetch('/item/383')
-    .then(function (response) {
-      if (response.status !== 200) {
-        console.log(
-          'Looks like there was a problem. Status Code: ' + response.status,
-        );
-        return;
-      }
+var latestQuery;
 
-      response.text().then(function (text) {
-        resultContainer.innerHTML = `
+function onScanSuccess(decodedText, decodedResult) {
+  if (decodedText !== latestQuery) {
+    fetch(`/item/${decodedText}`)
+      .then(function (response) {
+        if (response.status !== 200) {
+          console.log(
+            'Looks like there was a problem. Status Code: ' + response.status,
+          );
+          return;
+        }
+
+        response.text().then(function (text) {
+          resultContainer.innerHTML = `
         <p>${text}</p>
       `;
-      });
-    })
-    .catch(function (err) {
-      resultContainer.innerHTML = `
+          latestQuery = decodedText;
+        });
+      })
+      .catch(function (err) {
+        resultContainer.innerHTML = `
         <h2>Ooops</h2>
         <p>Failed to get response from backend.</p>
       `;
-    });
+      });
+  }
 }
 
 function onScanFailure() {}
