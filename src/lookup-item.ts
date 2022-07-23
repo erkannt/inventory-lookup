@@ -1,6 +1,7 @@
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
+import { GoogleSpreadsheet } from 'google-spreadsheet';
 import * as tt from 'io-ts-types';
 import { Logger } from 'pino';
 
@@ -14,13 +15,30 @@ type Item = {
   anmerkung: string;
 };
 
+const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
+
+const spreadsheetAuth = TE.tryCatch(
+  async () =>
+    doc.useServiceAccountAuth({
+      client_email:
+        process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? 'no client email provided',
+      private_key:
+        process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n') ??
+        'no private key provided',
+    }),
+  (error) => {
+    return error;
+  },
+);
+
 type GetItemFromSpreadsheet = (
   logger: Logger,
 ) => (itemNumber: number) => TE.TaskEither<unknown, Item>;
 
 const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => () =>
   pipe(
-    {
+    spreadsheetAuth,
+    TE.map(() => ({
       nummer: 383,
       artikel: 'Canon EOS 2000D (SN: 103072022149)',
       anzahl: 1,
@@ -28,8 +46,7 @@ const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => () =>
       kistenBezeichnung: 'Bild Technik',
       standort: 'Kiel',
       anmerkung: 'Seriennr: 103072022149',
-    },
-    TE.right,
+    })),
   );
 
 const renderItem = (item: Item) => `

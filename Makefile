@@ -11,7 +11,7 @@ dev:
 	docker-compose up --build --abort-on-container-exit
 
 prod: check-and-fix
-	docker-compose up --build -f docker-compose.prod.yaml
+	docker-compose -f docker-compose.prod.yaml up --build
 
 test: node_modules
 	npx jest --passWithNoTests
