@@ -7,11 +7,11 @@ node_modules: package.json package-lock.json
 
 check-and-fix: typecheck test fix
 
-dev: node_modules
-	npx ts-node-dev --project tsconfig.json --transpile-only --watch src ./src/index.ts
+dev: 
+	docker-compose up --build --abort-on-container-exit
 
 prod: check-and-fix
-	docker build . -t dmun-inventar-scanner && docker run -p 8080:8080 dmun-inventar-scanner
+	docker-compose up --build -f docker-compose.prod.yaml
 
 test: node_modules
 	npx jest --passWithNoTests
