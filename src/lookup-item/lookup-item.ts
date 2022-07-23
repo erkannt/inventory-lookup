@@ -80,8 +80,8 @@ export const lookupItem: LookupItem = (ports) => (query) =>
     TE.chain(({ numberToFind, sheetRows }) =>
       getMatchingRow(numberToFind, sheetRows),
     ),
-    TE.match(renderError(query), (error) => {
+    TE.match((error) => {
       ports.logger.error(error);
-      return renderRow(error);
-    }),
+      return renderError(query, error);
+    }, renderRow),
   );
