@@ -11,8 +11,7 @@ export const landingPage = `
 			<link rel="stylesheet" href="/static/styles.css">
 		</head>
 		<body>
-			<h1>Inventar Scanner</h1>
-			<div id="reader" width="100%"></div>
+			<div class="reader" id="reader"></div>
 			<div class="result-wrapper">
 				<div id="result"></div>
 			</div>

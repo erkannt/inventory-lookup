@@ -1,3 +1,12 @@
+.reader {
+  width: 100%;
+  border: 0px !important;
+}
+
+#reader__scan_region > video {
+  max-height: 60vh;
+}
+
 .result-wrapper {
   display: flex;
   justify-content: center;
