@@ -4,6 +4,7 @@ var latestQuery;
 
 function onScanSuccess(decodedText, decodedResult) {
   if (decodedText !== latestQuery) {
+    latestQuery = decodedText;
     fetch(`/item/${decodedText}`)
       .then(function (response) {
         if (response.status !== 200) {
@@ -17,7 +18,6 @@ function onScanSuccess(decodedText, decodedResult) {
           resultContainer.innerHTML = `
         <p>${text}</p>
       `;
-          latestQuery = decodedText;
         });
       })
       .catch(function (err) {
