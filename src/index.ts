@@ -4,11 +4,12 @@
 // have not been updated yet
 import express, { Application, Request, Response } from 'express';
 import * as TE from 'fp-ts/TaskEither';
+import { sequenceS } from 'fp-ts/lib/Apply';
 import { pipe } from 'fp-ts/lib/function';
 import path from 'path';
 import createLogger from 'pino';
 import pinoHttp from 'pino-http';
-import { createGetSheetRows } from './get-sheet-rows';
+import { createGetSheetRows } from './create-get-sheet-rows';
 import { landingPage } from './landing-page';
 import { lookupItem } from './lookup-item';
 
@@ -16,10 +17,10 @@ const PORT = 8080;
 
 void pipe(
   {
-    logger: createLogger(),
+    logger: TE.right(createLogger()),
     getSheetRows: createGetSheetRows(),
   },
-  TE.right,
+  sequenceS(TE.ApplyPar),
   TE.map((adapters) => {
     const app: Application = express();
     app.use(express.urlencoded({ extended: true }));

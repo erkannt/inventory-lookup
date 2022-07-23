@@ -5,8 +5,6 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { formatValidationErrors } from 'io-ts-reporters';
 import { Row, sheetCodec } from './types';
 
-const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
-
 const spreadsheetAuth = (document: GoogleSpreadsheet) =>
   TE.tryCatch(
     async () =>
@@ -30,17 +28,22 @@ const getSheet = (document: GoogleSpreadsheet) =>
     identity,
   );
 
-export const createGetSheetRows = (): TE.TaskEither<
-  unknown,
-  ReadonlyArray<Row>
-> =>
+type GetSheetRows = TE.TaskEither<unknown, ReadonlyArray<Row>>;
+
+type CreateGetSheetRows = () => TE.TaskEither<unknown, GetSheetRows>;
+
+export const createGetSheetRows: CreateGetSheetRows = () =>
   pipe(
-    doc,
+    new GoogleSpreadsheet(process.env.SHEET_ID),
     TE.right,
     TE.chainFirst(spreadsheetAuth),
     TE.chainFirst(loadSheetInfo),
-    TE.chain(getSheet),
-    TE.chainEitherKW(
-      flow(sheetCodec.decode, E.mapLeft(formatValidationErrors)),
+    TE.map(
+      flow(
+        getSheet,
+        TE.chainEitherKW(
+          flow(sheetCodec.decode, E.mapLeft(formatValidationErrors)),
+        ),
+      ),
     ),
   );
