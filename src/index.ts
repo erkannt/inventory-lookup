@@ -39,9 +39,14 @@ void pipe(
 
     return { app, adapters };
   }),
-  TE.map(({ app, adapters }) => {
-    app.listen(PORT, () =>
-      adapters.logger.info(`Server is listening on port ${PORT}`),
-    );
-  }),
+  (foo) => foo,
+  TE.matchW(
+    (error) =>
+      process.stderr.write(`Failed to launch server: ${String(error)}`),
+    ({ app, adapters }) => {
+      app.listen(PORT, () =>
+        adapters.logger.info(`Server is listening on port ${PORT}`),
+      );
+    },
+  ),
 )();
