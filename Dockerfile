@@ -22,4 +22,5 @@ RUN npx tsc
 FROM prod-npm as prod
 COPY --from=prod-build /app/build/ /app/
 COPY ./src/static /app/static/
+EXPOSE 8080
 CMD ["dumb-init", "node", "index.js"]
