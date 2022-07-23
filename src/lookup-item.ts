@@ -17,9 +17,9 @@ type Item = {
 
 const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
 
-const spreadsheetAuth = TE.tryCatch(
+const spreadsheetAuth = (sheet: GoogleSpreadsheet) => TE.tryCatch(
   async () =>
-    doc.useServiceAccountAuth({
+    sheet.useServiceAccountAuth({
       client_email:
         process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? 'no client email provided',
       private_key:
@@ -37,7 +37,9 @@ type GetItemFromSpreadsheet = (
 
 const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => () =>
   pipe(
-    spreadsheetAuth,
+    doc,
+    TE.right,
+    TE.chainFirst(spreadsheetAuth),
     TE.map(() => ({
       nummer: 383,
       artikel: 'Canon EOS 2000D (SN: 103072022149)',
