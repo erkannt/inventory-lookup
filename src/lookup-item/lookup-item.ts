@@ -2,7 +2,7 @@ import * as E from 'fp-ts/Either';
 import * as RA from 'fp-ts/ReadonlyArray';
 import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
-import { flow, identity, pipe } from 'fp-ts/lib/function';
+import { constant, flow, identity, pipe } from 'fp-ts/lib/function';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { formatValidationErrors } from 'io-ts-reporters';
 import * as tt from 'io-ts-types';
@@ -65,7 +65,7 @@ type LookupItem = (ports: Ports) => (query: string) => T.Task<string>;
 export const lookupItem: LookupItem = (ports) => (query) =>
   pipe(
     query,
-    tt.NumberFromString.decode,
+    flow(tt.NumberFromString.decode, E.mapLeft(constant('query is not a number'))),
     TE.fromEither,
     TE.chain(getMatchingRow),
     TE.match(renderError(query), (error) => {
