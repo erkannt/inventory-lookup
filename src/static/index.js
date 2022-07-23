@@ -5,6 +5,9 @@ var latestQuery;
 function onScanSuccess(decodedText, decodedResult) {
   if (decodedText !== latestQuery) {
     latestQuery = decodedText;
+
+    resultContainer.innerHTML = '<div class="lds-dual-ring"></div>';
+
     fetch(`/item/${decodedText}`)
       .then(function (response) {
         if (response.status !== 200) {

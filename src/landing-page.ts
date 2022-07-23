@@ -8,11 +8,14 @@ export const landingPage = `
 			<title>DMUN Inventar Scanner</title>
 			<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 			<link rel="stylesheet" href="https://vanillacss.com/vanilla.css">
+			<link rel="stylesheet" href="/static/styles.css">
 		</head>
 		<body>
 			<h1>Inventar Scanner</h1>
 			<div id="reader" width="100%"></div>
-			<div id="result"></div>
+			<div class="result-wrapper">
+				<div id="result"></div>
+			</div>
 			<script src="/static/index.js"></script>
 		</body>
 	</html>
