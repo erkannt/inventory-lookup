@@ -21,7 +21,7 @@ const rowCodec = t.exact(
   }),
 );
 
-type Item = t.TypeOf<typeof rowCodec>;
+type Row = t.TypeOf<typeof rowCodec>;
 
 const sheetCodec = t.array(rowCodec);
 
@@ -50,11 +50,11 @@ const getSheet = (document: GoogleSpreadsheet) =>
     identity,
   );
 
-type GetItemFromSpreadsheet = (
+type GetMatchingRow = (
   logger: Logger,
-) => (itemNumber: number) => TE.TaskEither<unknown, Item>;
+) => (itemNumber: number) => TE.TaskEither<unknown, Row>;
 
-const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => (itemNumber) =>
+const getMatchingRow: GetMatchingRow = () => (itemNumber) =>
   pipe(
     doc,
     TE.right,
@@ -72,13 +72,13 @@ const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => (itemNumber) =>
     ),
   );
 
-const renderItem = (item: Item) => `
-  <p><b>${item.Verpackung}</b> ${item.Kistenbezeichnung}</p>
-  <p>${item.Artikel}</p>
+const renderRow = (row: Row) => `
+  <p><b>${row.Verpackung}</b> ${row.Kistenbezeichnung}</p>
+  <p>${row.Artikel}</p>
   <p>
-    <b>Anzahl:</b> ${item.Anzahl}<br>
-    <b>Anmerkung:</b> ${item.Anmerkung}<br>
-    <b>Standort:</b> ${item.Standort}<br>
+    <b>Anzahl:</b> ${row.Anzahl}<br>
+    <b>Anmerkung:</b> ${row.Anmerkung}<br>
+    <b>Standort:</b> ${row.Standort}<br>
   </p>
 `;
 
@@ -101,9 +101,9 @@ export const lookupItem: LookupItem = (ports) => (query) =>
     query,
     tt.NumberFromString.decode,
     TE.fromEither,
-    TE.chain(getItemFromSpreadsheet(ports.logger)),
+    TE.chain(getMatchingRow(ports.logger)),
     TE.match(renderError(query), (error) => {
       ports.logger.error(error);
-      return renderItem(error);
+      return renderRow(error);
     }),
   );
