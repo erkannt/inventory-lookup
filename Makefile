@@ -26,3 +26,7 @@ lint: node_modules
 fix: node_modules
 	npx eslint --fix .
 	npx prettier --ignore-unknown --check '**' --write
+
+release: check-and-fix
+	docker build . -t rknt/dmun-inventar-scanner
+	docker push rknt/dmun-inventar-scanner
