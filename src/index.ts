@@ -23,7 +23,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/item/:number', async (req: Request, res: Response) => {
-  res.status(200).send(await lookupItem(req.params.number)());
+  res.status(200).send(await lookupItem({ logger })(req.params.number)());
 });
 
 app.use('/static', express.static(path.resolve(__dirname, './static')));

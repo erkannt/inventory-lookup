@@ -2,6 +2,7 @@ import * as T from 'fp-ts/Task';
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 import * as tt from 'io-ts-types';
+import { Logger } from 'pino';
 
 type Item = {
   nummer: number;
@@ -14,10 +15,10 @@ type Item = {
 };
 
 type GetItemFromSpreadsheet = (
-  itemNumber: number,
-) => TE.TaskEither<unknown, Item>;
+  logger: Logger,
+) => (itemNumber: number) => TE.TaskEither<unknown, Item>;
 
-const getItemFromSpreadsheet: GetItemFromSpreadsheet = () =>
+const getItemFromSpreadsheet: GetItemFromSpreadsheet = () => () =>
   pipe(
     {
       nummer: 383,
@@ -47,13 +48,17 @@ const renderError = (query: string) => () =>
   <p>Couldn't retrieve an info for query: ${query}</p>
 `;
 
-type LookupItem = (query: string) => T.Task<string>;
+type Ports = {
+  logger: Logger;
+};
 
-export const lookupItem: LookupItem = (query) =>
+type LookupItem = (ports: Ports) => (query: string) => T.Task<string>;
+
+export const lookupItem: LookupItem = (ports) => (query) =>
   pipe(
     query,
     tt.NumberFromString.decode,
     TE.fromEither,
-    TE.chain(getItemFromSpreadsheet),
+    TE.chain(getItemFromSpreadsheet(ports.logger)),
     TE.match(renderError(query), renderItem),
   );
