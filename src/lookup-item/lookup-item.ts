@@ -37,25 +37,27 @@ const getSheet = (document: GoogleSpreadsheet) =>
     identity,
   );
 
-type GetMatchingRow = (itemNumber: number) => TE.TaskEither<unknown, Row>;
+type GetMatchingRow = (
+  numberToFind: number,
+  sheetRows: ReadonlyArray<Row>,
+) => TE.TaskEither<unknown, Row>;
 
-const getMatchingRow: GetMatchingRow = (itemNumber) =>
+const getMatchingRow: GetMatchingRow = (numberToFind, sheetRows) =>
   pipe(
-    doc,
-    TE.right,
-    TE.chainFirst(spreadsheetAuth),
-    TE.chainFirst(loadSheetInfo),
-    TE.chain(getSheet),
-    TE.chainEitherKW(
-      flow(sheetCodec.decode, E.mapLeft(formatValidationErrors)),
-    ),
-    TE.chainEitherKW(
-      flow(
-        RA.findFirst((row) => row.Nummer === itemNumber.toString()),
-        E.fromOption(() => `Could not find row with Nummer ${itemNumber}`),
-      ),
-    ),
+    sheetRows,
+    RA.findFirst((row) => row.Nummer === numberToFind.toString()),
+    E.fromOption(() => `Could not find row with Nummer ${numberToFind}`),
+    TE.fromEither,
   );
+
+const getSheetRows = pipe(
+  doc,
+  TE.right,
+  TE.chainFirst(spreadsheetAuth),
+  TE.chainFirst(loadSheetInfo),
+  TE.chain(getSheet),
+  TE.chainEitherKW(flow(sheetCodec.decode, E.mapLeft(formatValidationErrors))),
+);
 
 type Ports = {
   logger: Logger;
@@ -72,9 +74,12 @@ export const lookupItem: LookupItem = (ports) => (query) =>
         E.mapLeft(constant('query is not a number')),
         TE.fromEither,
       ),
+      sheetRows: getSheetRows,
     },
     sequenceS(TE.ApplyPar),
-    TE.chain(({ numberToFind }) => getMatchingRow(numberToFind)),
+    TE.chain(({ numberToFind, sheetRows }) =>
+      getMatchingRow(numberToFind, sheetRows),
+    ),
     TE.match(renderError(query), (error) => {
       ports.logger.error(error);
       return renderRow(error);
