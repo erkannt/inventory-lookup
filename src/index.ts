@@ -4,6 +4,8 @@
 // have not been updated yet
 import express, { Application, Request, Response } from 'express';
 import path from 'path';
+import pinoHttp from 'pino-http';
+import createLogger from 'pino'
 import { landingPage } from './landing-page';
 import { lookupItem } from './lookup-item';
 
@@ -12,8 +14,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const port = 8080;
 
+app.use(pinoHttp());
+
+const logger = createLogger()
+
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).send(landingPage);
+  res.send(landingPage);
 });
 
 app.get('/item/:number', async (req: Request, res: Response) => {
@@ -23,5 +29,5 @@ app.get('/item/:number', async (req: Request, res: Response) => {
 app.use('/static', express.static(path.resolve(__dirname, './static')));
 
 app.listen(port, () =>
-  process.stdout.write(`Server is listening on port ${port}!\n`),
+  logger.info(`Server is listening on port ${port}`),
 );
