@@ -13,7 +13,10 @@ export const landingPage = `
 		<body>
 			<div class="reader" id="reader"></div>
 			<div class="result-wrapper">
-				<div id="result"></div>
+				<div id="result">
+					<h1>Inventar Scanner</h1>
+					<p>Kamera freigeben und los gehts.</p>
+				</div>
 			</div>
 			<script src="/static/index.js"></script>
 		</body>
