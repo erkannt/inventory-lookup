@@ -1,3 +1,7 @@
+import QrScanner from '/static/qr-scanner.min.js';
+
+const videoElem = document.getElementById('reader');
+
 const resultContainer = document.getElementById('result');
 
 var latestQuery;
@@ -32,12 +36,14 @@ function onScanSuccess(decodedText, decodedResult) {
   }
 }
 
-function onScanFailure() {}
-
-let html5QrcodeScanner = new Html5QrcodeScanner(
-  'reader',
-  { fps: 10 },
-  /* verbose= */ false,
+const qrScanner = new QrScanner(
+  videoElem,
+  (result) => onScanSuccess(result.data),
+  {
+    preferredCamera: 'environment',
+    highlightScanRegion: true,
+    highlightCodeOutline: true,
+  },
 );
 
-html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+qrScanner.start();
