@@ -1,7 +1,5 @@
 import QrScanner from '/static/qr-scanner.min.js';
 
-const videoElem = document.getElementById('reader');
-
 const resultContainer = document.getElementById('result');
 
 var latestQuery;
@@ -36,6 +34,8 @@ function onScanSuccess(decodedText, decodedResult) {
   }
 }
 
+const videoElem = document.getElementById('reader');
+
 const qrScanner = new QrScanner(
   videoElem,
   (result) => onScanSuccess(result.data),
@@ -46,4 +46,7 @@ const qrScanner = new QrScanner(
   },
 );
 
-qrScanner.start();
+const startCameraButton = document.getElementById('start-camera');
+
+startCameraButton.addEventListener("click", () => qrScanner.start());
+

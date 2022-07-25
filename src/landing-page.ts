@@ -25,6 +25,7 @@ export const landingPage = `
 			<div class="result-wrapper">
 				<div id="result">
 					<h1>Inventar Scanner</h1>
+					<button id="start-camera">Kamera starten</button>
 					<p>Kamera freigeben und los gehts.</p>
 				</div>
 			</div>
