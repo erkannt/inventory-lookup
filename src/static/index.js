@@ -48,5 +48,11 @@ const qrScanner = new QrScanner(
 
 const startCameraButton = document.getElementById('start-camera');
 
-startCameraButton.addEventListener("click", () => qrScanner.start());
+function launchScanner() {
+  qrScanner.start();
+  resultContainer.innerHTML = `
+    Bitte QR Code vor die Kamera halten.
+  `;
+}
 
+startCameraButton.addEventListener('click', launchScanner);
