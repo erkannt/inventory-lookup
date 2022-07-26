@@ -6,10 +6,11 @@ export const manualPage = `
 	<html lang="en">
 		<body>
 			<h1>Manuelle Abfrage</h1>
-			<fieldset>
-				<input type="text" id="manual-request-input">
-				<button id="manual-request-button">Abfragen</button>
-			</fieldset>
+			<form id="manual-query">
+				<label for="query">Inventar Nummer:</label>
+				<input type="text" id="query">
+				<button type="submit">Abfragen</button>
+			</form>
 			<div id="result"></div>
 			<a href="/">Zurück zum scanner</a>
 		</body>
