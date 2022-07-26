@@ -50,3 +50,18 @@ if (videoElem) {
 
   startCameraButton.addEventListener('click', launchScanner);
 }
+
+const manualRequestButton = document.getElementById('manual-request-button');
+
+if (manualRequestButton) {
+  const manualRequestInput = document.getElementById('manual-request-input');
+  console.log('foo');
+
+  function manualRequest() {
+    const query = manualRequestInput.value;
+    console.log(query);
+    onScanSuccess(query);
+  }
+
+  manualRequestButton.addEventListener('click', manualRequest);
+}

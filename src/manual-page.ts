@@ -7,8 +7,8 @@ export const manualPage = `
 		<body>
 			<h1>Manuelle Abfrage</h1>
 			<fieldset>
-				<input type="text">
-				<button>Abfragen</button>
+				<input type="text" id="manual-request-input">
+				<button id="manual-request-button">Abfragen</button>
 			</fieldset>
 			<div id="result"></div>
 			<a href="/">Zurück zum scanner</a>
