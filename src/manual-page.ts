@@ -1,11 +1,11 @@
-export const landingPage = `
+export const manualPage = `
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<meta http-equiv="X-UA-Compatible" content="ie=edge">
-			<title>DMUN Inventar Scanner</title>
+			<title>DMUN Inventar Abfrage</title>
 			<link rel="stylesheet" href="https://vanillacss.com/vanilla.css">
 			<link rel="stylesheet" href="/static/styles.css">
 
@@ -21,14 +21,13 @@ export const landingPage = `
 
 		</head>
 		<body>
-			<video class="reader" id="reader"></video>
-			<div class="result-wrapper">
-				<div id="result">
-					<h1>Inventar Scanner</h1>
-					<button id="start-camera">Kamera starten</button>
-					<p>Kamera freigeben und los gehts.</p>
-				</div>
-			</div>
+			<h1>Manuelle Abfrage</h1>
+			<fieldset>
+				<input type="text">
+				<button>Abfragen</button>
+			</fieldset>
+			<div id="result"></div>
+			<a href="/">Zurück zum scanner</a>
 		</body>
 		<script src="/static/qr-scanner.min.js" type="module"></script>
 		<script src="/static/index.js" type="module"></script>

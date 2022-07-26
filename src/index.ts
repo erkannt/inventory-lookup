@@ -10,8 +10,9 @@ import path from 'path';
 import createLogger from 'pino';
 import pinoHttp from 'pino-http';
 import { createGetSheetRows } from './create-get-sheet-rows';
-import { landingPage } from './landing-page';
 import { lookupItem } from './lookup-item';
+import { manualPage } from './manual-page';
+import { scannerPage } from './scanner-page';
 
 const PORT = 8080;
 
@@ -28,7 +29,11 @@ void pipe(
 
     app.use(pinoHttp());
     app.get('/', (req: Request, res: Response) => {
-      res.send(landingPage);
+      res.send(scannerPage);
+    });
+
+    app.get('/manual', (req: Request, res: Response) => {
+      res.send(manualPage);
     });
 
     app.get('/item/:number', async (req: Request, res: Response) => {
