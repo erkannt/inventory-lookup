@@ -12,13 +12,6 @@ function onScanSuccess(decodedText, decodedResult) {
 
     fetch(`/item/${decodedText}`)
       .then(function (response) {
-        if (response.status !== 200) {
-          console.log(
-            'Looks like there was a problem. Status Code: ' + response.status,
-          );
-          return;
-        }
-
         response.text().then(function (text) {
           resultContainer.innerHTML = `
         <p>${text}</p>
@@ -27,7 +20,7 @@ function onScanSuccess(decodedText, decodedResult) {
       })
       .catch(function (err) {
         resultContainer.innerHTML = `
-        <h2>Ooops</h2>
+        <h1>Ooops</h1>
         <p>Failed to get response from backend.</p>
       `;
       });
