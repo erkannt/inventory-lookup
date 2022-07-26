@@ -29,23 +29,24 @@ function onScanSuccess(decodedText, decodedResult) {
 
 const videoElem = document.getElementById('reader');
 
-const qrScanner = new QrScanner(
-  videoElem,
-  (result) => onScanSuccess(result.data),
-  {
-    preferredCamera: 'environment',
-    highlightScanRegion: true,
-    highlightCodeOutline: true,
-  },
-);
+if (videoElem) {
+  const qrScanner = new QrScanner(
+    videoElem,
+    (result) => onScanSuccess(result.data),
+    {
+      preferredCamera: 'environment',
+      highlightScanRegion: true,
+      highlightCodeOutline: true,
+    },
+  );
+  const startCameraButton = document.getElementById('start-camera');
 
-const startCameraButton = document.getElementById('start-camera');
+  function launchScanner() {
+    qrScanner.start();
+    resultContainer.innerHTML = `
+      Bitte QR Code vor die Kamera halten.
+    `;
+  }
 
-function launchScanner() {
-  qrScanner.start();
-  resultContainer.innerHTML = `
-    Bitte QR Code vor die Kamera halten.
-  `;
+  startCameraButton.addEventListener('click', launchScanner);
 }
-
-startCameraButton.addEventListener('click', launchScanner);
