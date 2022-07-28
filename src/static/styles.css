@@ -1,13 +1,37 @@
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  padding: 0;
+}
+
 .reader {
   width: 100%;
-  border: 0px !important;
-  max-height: 60vh;
   background-color: lightgray;
+  max-height: 60vh;
+  margin-bottom: 1rem;
+}
+
+.scan-region-highlight-svg {
+  stroke: white !important;
+}
+
+.code-outline-highlight {
+  stroke: springgreen !important;
+  stroke-width: 15px !important;
+}
+
+.manual-input {
+  justify-self: center;
 }
 
 .result-wrapper {
-  display: flex;
-  justify-content: center;
+  justify-self: center;
+}
+
+.nav {
+  justify-self: center;
+  padding: 0.5rem;
 }
 
 .lds-dual-ring {

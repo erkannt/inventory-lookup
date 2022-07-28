@@ -4,7 +4,7 @@ export const scannerPage = `
 	<!DOCTYPE html>
 	<html lang="en">
 		${head('DMUN Inventar Scanner')}
-		<body>
+		<body class="app">
 			<video class="reader" id="reader"></video>
 			<div class="result-wrapper">
 				<div id="result">
@@ -13,7 +13,9 @@ export const scannerPage = `
 					<p>Kamera freigeben und los gehts.</p>
 				</div>
 			</div>
-			<a href="/manual">Manuelle Eingabe</a>
+			<nav class=nav>
+				<a href="/manual">Manuelle Eingabe</a>
+			</nav>
 		</body>
 
 		<script src="/static/qr-scanner.min.js" type="module"></script>
